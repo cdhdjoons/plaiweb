@@ -19,17 +19,6 @@ export default function Explore() {
     const [select, setSelect] = useState(0);
     const videoRefs = useRef({}); // 모든 비디오 ref를 객체로 관리
 
-    // const handlePlay = (id, videoRef) => {
-    //     if (videoRef.current) {
-    //         if (playingVideo === id) {
-    //             videoRef.current.pause();
-    //             setPlayingVideo(null);
-    //         } else {
-    //             videoRef.current.play();
-    //             setPlayingVideo(id);
-    //         }
-    //     }
-    // };
     const handlePlay = (id) => {
         const videoRef = videoRefs.current[id];
         if (videoRef) {
@@ -42,17 +31,7 @@ export default function Explore() {
             }
         }
     };
-    // const handleLoadedMetadata = (id, videoRef) => {
-    //     if (videoRef.current) {
-    //         const duration = videoRef.current.duration;
-    //         const minutes = Math.floor(duration / 60);
-    //         const seconds = Math.floor(duration % 60);
-    //         setVideoDurations((prev) => ({
-    //             ...prev,
-    //             [id]: `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`, // 2:05 같은 형식으로 저장
-    //         }));
-    //     }
-    // };
+    
     const handleLoadedMetadata = (id) => {
         const videoRef = videoRefs.current[id];
         if (videoRef) {

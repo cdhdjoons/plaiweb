@@ -12,25 +12,30 @@ export default function SecondMain() {
     const [videoDurations, setVideoDurations] = useState({});
     const [playingVideo, setPlayingVideo] = useState(null);
 
-    const handlePlay = (id, videoRef) => {
-        if (videoRef.current) {
+    const videoRefs = useRef({}); // 모든 비디오 ref를 객체로 관리
+
+    const handlePlay = (id) => {
+        const videoRef = videoRefs.current[id];
+        if (videoRef) {
             if (playingVideo === id) {
-                videoRef.current.pause();
+                videoRef.pause();
                 setPlayingVideo(null);
             } else {
-                videoRef.current.play();
+                videoRef.play();
                 setPlayingVideo(id);
             }
         }
     };
-    const handleLoadedMetadata = (id, videoRef) => {
-        if (videoRef.current) {
-            const duration = videoRef.current.duration;
+    
+    const handleLoadedMetadata = (id) => {
+        const videoRef = videoRefs.current[id];
+        if (videoRef) {
+            const duration = videoRef.duration;
             const minutes = Math.floor(duration / 60);
             const seconds = Math.floor(duration % 60);
             setVideoDurations((prev) => ({
                 ...prev,
-                [id]: `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`, // 2:05 같은 형식으로 저장
+                [id]: `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`,
             }));
         }
     };
@@ -47,11 +52,11 @@ export default function SecondMain() {
             </div>
             <div className="grid gap-4 mt-4">
                 {videos.map((video) => {
-                    const videoRef = useRef(null);
+                    
                     return (
                         <div key={video.id} className="relative cursor-pointer">
-                            <video onClick={() => handlePlay(video.id, videoRef)} onLoadedMetadata={() => handleLoadedMetadata(video.id, videoRef)}
-                                ref={videoRef} src={video.src} className="rounded-[4px] overflow-hidden w-full object-cover object-center h-[204px]"></video>
+                            <video onClick={() => handlePlay(video.id)} onLoadedMetadata={() => handleLoadedMetadata(video.id)}
+                                ref={(el) => (videoRefs.current[video.id] = el)} src={video.src} className="rounded-[4px] overflow-hidden w-full object-cover object-center h-[204px]"></video>
                             {playingVideo === video.id && (
                                 <div className="absolute top-[160px] w-full p-4 flex justify-between text-[14px]">
                                     <div className="flex items-center gap-1">
@@ -70,7 +75,7 @@ export default function SecondMain() {
                             )}
                             {playingVideo !== video.id && (
                                 <button
-                                    onClick={() => handlePlay(video.id, videoRef)}
+                                    onClick={() => handlePlay(video.id)}
                                     className="absolute inset-0 flex items-center justify-center w-full h-full bg-black/30 text-white text-2xl rounded-lg"
                                 >
                                     ▶
